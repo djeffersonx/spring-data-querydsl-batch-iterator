@@ -1,6 +1,9 @@
 package br.com.djeffersonx.batchiterator;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -20,15 +23,21 @@ public class BatchIterator<T> implements Iterator<T> {
     private Integer actualPageIndex = 0;
     private Integer totalPages;
 
+    private static final BooleanExpression EMPTY_PREDICATE = Expressions.asBoolean(true).isTrue();
+
+    public BatchIterator(QuerydslPredicateExecutor<T> repository, Integer batchSize) {
+        this(repository, null, batchSize);
+    }
+
     public BatchIterator(QuerydslPredicateExecutor<T> repository, Predicate predicate, Integer batchSize) {
         this.repository = repository;
-        this.predicate = predicate;
+        this.predicate = predicate == null ? EMPTY_PREDICATE : predicate;
         this.batchSize = batchSize;
         nextPage();
     }
 
     private void nextPage() {
-        Page<T> page = repository.findAll(predicate, PageRequest.of(actualPageIndex, batchSize));
+        Page<T> page = repository.findAll(predicate == null ? new BooleanBuilder() : predicate, PageRequest.of(actualPageIndex, batchSize));
         this.actualPageIndex++;
         this.actualPageQueue = new LinkedList<>(page.toList());
         if (totalPages == null) {
