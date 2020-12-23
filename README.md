@@ -4,7 +4,7 @@ You have a really huge database, and for some reason you need to load all the da
 
 To solve this we must do the batch processing, for example the following case:
 
-You want to select the records from the Person table created after the date: 2015-01-01 (this select results in 150 million records), and perform a memory processing in batches of 10,000 records at a time.
+You want to select the records from the Person table created after the date: 2010-01-01 (this select results in 150 million records), and perform a memory processing in batches of 10,000 records at a time.
 
 ### The solution:
 
