@@ -43,21 +43,21 @@ public class TestBatchIterator {
     @Before
     public void before() {
 
-        var mockTestProcessControlList = MOCK_DATA_IDS.get()
+        var mockPersonsRecords = MOCK_DATA_IDS.get()
                 .mapToObj(id -> new Person(id, "Registro: " + id)).collect(Collectors.toList());
 
         IntStream.range(0, (TOTAL_RECORDS / PAGE_SIZE)).forEach(pageIndex -> {
             var indexFirstPageElement = pageIndex * PAGE_SIZE;
             var indexLastPageElement = pageIndex * PAGE_SIZE + PAGE_SIZE;
             var actualPageable = PageRequest.of(pageIndex, PAGE_SIZE);
-            var actualPageElements = mockTestProcessControlList.subList(indexFirstPageElement, indexLastPageElement);
+            var actualPageElements = mockPersonsRecords.subList(indexFirstPageElement, indexLastPageElement);
             when(repository.findAll(PREDICATE_LAST_ID_GT_0, actualPageable))//
                     .thenReturn(new PageImpl<>(actualPageElements, actualPageable, TOTAL_RECORDS));
         });
 
         PageRequest allDataPage = PageRequest.of(0, 500);
         when(repository.findAll(PREDICATE_LAST_ID_GT_0, allDataPage))//
-                .thenReturn(new PageImpl<>(mockTestProcessControlList, allDataPage, TOTAL_RECORDS));
+                .thenReturn(new PageImpl<>(mockPersonsRecords, allDataPage, TOTAL_RECORDS));
 
     }
 
